@@ -8,18 +8,22 @@ import argparse
 
 def import_data_from_file(file_name):
     j_file = file_name
-    with open(j_file, encoding="utf-8") as jfile:
-        output = json.load(jfile)
+    try:
+        with open(j_file, encoding="utf-8") as jfile:
+            output = json.load(jfile)
+    except Exception as e:
+        print(e)
+        exit(1)
 
     ppl_ages = output['ppl_ages']
     buckets = output['buckets']
-    temp_list = []
-    for key, value in ppl_ages.items():
-        temp_list.append(value)
+    all_ages = []
+    for name, age in ppl_ages.items():
+        all_ages.append(age)
 
-    max_age = max(temp_list)
-    max_part = max(buckets)
-    if max_age > max_part:
+    max_age = max(all_ages)
+    max_partition = max(buckets)
+    if max_age > max_partition:
         buckets.append(max_age)
 
     buckets.append(0)
@@ -46,8 +50,12 @@ def sort_output_data(data):
 
 
 def write_to_yaml(sorted_dict):
-    with open("ex1_results.yaml", "w") as yaml_file:
-        yaml.dump(sorted_dict, yaml_file, default_flow_style=False)
+    try:
+        with open("ex1_results.yaml", "w") as yaml_file:
+            yaml.dump(sorted_dict, yaml_file, default_flow_style=False)
+    except Exception as e:
+        print(e)
+        exit()
 
 
 def main(input_file: str):
