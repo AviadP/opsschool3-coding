@@ -2,11 +2,8 @@ import json
 import yaml
 
 
-# TODO: create function that sort returned list and divide it into sub-lists for each partition
-# TODO: create function that run over the dict and split its items into proper sublist
-# TODO: for debug purpose only (remove when it works) - add print for results
+# TODO: add file as argument
 # TODO: create function that print results into yaml file
-# TODO: create 'run' function
 
 
 def draft():
@@ -39,6 +36,7 @@ def import_data_from_file(file_name):
     if max_age > max_part:
         buckets.append(max_age)
 
+    buckets.append(0)
     buckets = sorted(buckets)
     results = (ppl_ages, buckets)
     return results
@@ -47,20 +45,28 @@ def import_data_from_file(file_name):
 def sort_data(data):
     buckets_list = data[1]
     pairs = []
-    for i in range(0, len(buckets_list)-1):
-        pairs.append([buckets_list[i], buckets_list[i+1]])
+    for i in range(0, len(buckets_list) - 1):
+        pairs.append([buckets_list[i], buckets_list[i + 1]])
 
-    results_dict = {}
-    for key in data[0].items():
-        pass
+    results_string = ""
+    for pair in pairs:
+        results_string = results_string + "{0}-{1}: \n".format(pair[0], pair[1])
+        for key, value in data[0].items():
+            if (min(pair)) <= value < (max(pair)):
+                results_string = results_string + "- {0} \n".format(key)
+
+    print(results_string)
+    return results_string
 
 
-def write_to_ymal(data):
+def write_to_ymal(results_dict):
     pass
 
 
-if __name__ == "__main__":
+def main():
     file_name = "input.json"
-    #print(import_data_from_file(file_name), "\n")
-    #print((import_data_from_file(file_name)[1]))
     sort_data(import_data_from_file(file_name))
+
+
+if __name__ == "__main__":
+    main()
