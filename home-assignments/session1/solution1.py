@@ -55,7 +55,7 @@ def write_to_yaml(sorted_dict):
             yaml.dump(sorted_dict, yaml_file, default_flow_style=False)
     except Exception as e:
         print(e)
-        exit()
+        exit(1)
 
 
 def main(input_file: str):
