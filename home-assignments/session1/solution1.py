@@ -11,10 +11,14 @@ def import_data_from_file(file_name):
     try:
         with open(j_file, encoding="utf-8") as jfile:
             output = json.load(jfile)
+
+            return output
     except Exception as e:
         print(e)
         exit(1)
 
+
+def analyze_input_data(**output):
     ppl_ages = output['ppl_ages']
     buckets = output['buckets']
     all_ages = []
@@ -58,8 +62,9 @@ def write_to_yaml(sorted_dict):
         exit(1)
 
 
-def main(input_file: str):
-    sorted_data = import_data_from_file(input_file)
+def main(json_file: str):
+    data_input = import_data_from_file(json_file)
+    sorted_data = analyze_input_data(**data_input)
     data_output = sort_output_data(sorted_data)
     write_to_yaml(data_output)
 
@@ -69,4 +74,4 @@ if __name__ == "__main__":
     parser.add_argument("-i", "--input", help="JSON file path")
     args = parser.parse_args()
     input_file = args.input
-    main(input_file=input_file)
+    main(json_file=input_file)
