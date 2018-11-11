@@ -1,8 +1,7 @@
 from weather import Weather, Unit
 import click
 
-
-def draft():
+"""def draft():
     temp_units = input("select required temperature units, type 1 for celsius, 2 for Fahrenheit ")
     if temp_units == "1":
         weather = Weather(unit=Unit.CELSIUS)
@@ -28,9 +27,16 @@ def draft():
 
     print(announcement)
 
+"""
 
-def get_weather_info_by_city(city):
-    weather = Weather(unit=Unit.CELSIUS)
+
+def get_weather_info_by_city(city, units):
+    if units == "c":
+        weather = Weather(unit=Unit.CELSIUS)
+        selected_units = "CELSIUS"
+    elif units == "f":
+        weather = Weather(unit=Unit.FAHRENHEIT)
+        selected_units = "FAHRENHEIT"
 
     city_weather_info = weather.lookup_by_location(city)
 
@@ -53,13 +59,10 @@ def forecast_by_weather_info(city_weather_info):
     return full_forecast_info
 
 
-
-
-
 @click.command()
 @click.option("--city", help="selected city")
 @click.option("--forecast", help="selected days , starting from today"
-                                 "for example: --forecast TODAY for today's forecast, TODAY+3 for next 3 days(including today)")
+                                 "for example: --forecast TODAY for today's forecast, TODAY+3 for next 3 days")
 def main(data):
     pass
 
