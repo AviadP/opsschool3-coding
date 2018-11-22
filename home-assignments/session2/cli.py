@@ -59,11 +59,9 @@ def parse_output_from_weather_info(full_forecast_info, forecast):
 @click.option("--forecast", default=0, help="selected days , starting from today"
                                             "for example: --forecast TODAY for today's forecast, TODAY+3 for next 3 days")
 def main(city, units, forecast):
-    print(forecast)
     city_weather_info = get_weather_info_by_city(city, units)
     full_forecast_info = forecast_by_weather_info(city_weather_info)
     ranged_forecast = parse_output_from_weather_info(full_forecast_info, forecast)
-    print(ranged_forecast)
     if forecast == 0:
         condition = ranged_forecast[0][1]
         high = ranged_forecast[0][2]
