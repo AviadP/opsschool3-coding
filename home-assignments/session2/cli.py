@@ -31,32 +31,8 @@ def get_weather_info_by_city(city, units):
 
 def forecast_by_weather_info(city_weather_info):
     forecasts = city_weather_info.forecast
-    dates = []
-    condition = []
-    high = []
-    low = []
-    for forecast in forecasts:
-        dates.append(forecast.date)
-        condition.append(forecast.text)
-        high.append(forecast.high)
-        low.append(forecast.low)
 
-    full_forecast_info = {"date": dates, "condition": condition, "high": high, "low": low}
-
-    return full_forecast_info
-
-
-def parse_output_from_weather_info(full_forecast_info, forecast):
-    output = [full_forecast_info.get("date"), full_forecast_info.get("condition"), full_forecast_info.get("high"),
-              full_forecast_info.get("low")]
-    ranged_forecast = []
-    for i in range(0, forecast + 1):
-        daily_forecast = []
-        for day in output:
-            daily_forecast.append(day[i])
-        ranged_forecast.append(daily_forecast)
-
-    return ranged_forecast
+    return forecasts
 
 
 def get_forecast_length(forecast):
@@ -73,6 +49,28 @@ def get_forecast_length(forecast):
     return forecast_length
 
 
+def print_output(city, units, forecasts, forecast_length):
+    if forecast_length == 0:
+        condition = forecasts[0].text
+        high = forecasts[0].high
+        low = forecasts[0].low
+        output_string = "The weather in {city} today is {condition} with temperatures trailing from ({low})-({high}) " \
+                        "{units}".format(city=city, condition=condition, high=high, low=low, units=units)
+        print(output_string)
+        return 0
+    else:
+        for day in range(0, forecast_length + 1):
+            date = forecasts[day].date
+            condition = forecasts[day].text
+            high = forecasts[day].high
+            low = forecasts[day].low
+            output_string = "{date} {condition} with temperatures trailing from ({low})-({high}) {units}".format(
+                date=date,
+                city=city, condition=condition, high=high, low=low, units=units)
+            print(output_string)
+        return 0
+
+
 @click.command()
 @click.option("--city", help="selected city")
 @click.option("--units", type=click.Choice(['c', 'f']), help="select 'c' for Celsius or 'f' for Fahrenhiet.")
@@ -80,30 +78,10 @@ def get_forecast_length(forecast):
               help="selected days , starting from today"
                    "for example: --forecast TODAY for today's forecast, TODAY+3 for next 3 days")
 def main(city, units, forecast):
-    forecast = get_forecast_length(forecast)
     city_weather_info, units = get_weather_info_by_city(city, units)
-    full_forecast_info = forecast_by_weather_info(city_weather_info)
-    ranged_forecast = parse_output_from_weather_info(full_forecast_info, forecast)
-
-    if forecast == 0:
-        condition = ranged_forecast[0][1]
-        high = ranged_forecast[0][2]
-        low = ranged_forecast[0][3]
-        output_string = "The weather in {city} today is {condition} with temperatures trailing from ({low})-({high}) " \
-                        "{units}".format(city=city, condition=condition, high=high, low=low, units=units)
-        print(output_string)
-
-    else:
-        for i in range(0, forecast + 1):
-            date = ranged_forecast[i][0]
-            condition = ranged_forecast[i][1]
-            high = ranged_forecast[i][2]
-            low = ranged_forecast[i][3]
-            output_string = "{date} {condition} with temperatures trailing from ({low})-({high}) {units}".format(
-                date=date,
-                city=city, condition=condition, high=high, low=low, units=units)
-            print(output_string)
-    return 0
+    forecasts = forecast_by_weather_info(city_weather_info)
+    forecast_length = get_forecast_length(forecast)
+    print_output(city, units, forecasts, forecast_length)
 
 
 if __name__ == "__main__":
