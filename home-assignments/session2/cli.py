@@ -5,10 +5,6 @@ except Exception as e:
     e.KeyError: ModuleNotFoundError
 
 
-# TODO change date format
-# TODO fix --units (need to be -c or -f)
-
-
 def get_weather_info_by_city(city, units):
     weather = Weather()
     selected_units = ""
@@ -25,14 +21,9 @@ def get_weather_info_by_city(city, units):
         exit(1)
 
     city_weather_info = weather.lookup_by_location(city)
-
-    return city_weather_info, selected_units
-
-
-def forecast_by_weather_info(city_weather_info):
     forecasts = city_weather_info.forecast
 
-    return forecasts
+    return forecasts, selected_units
 
 
 def get_forecast_length(forecast):
@@ -78,8 +69,7 @@ def print_output(city, units, forecasts, forecast_length):
               help="selected days , starting from today"
                    "for example: --forecast TODAY for today's forecast, TODAY+3 for next 3 days")
 def main(city, units, forecast):
-    city_weather_info, units = get_weather_info_by_city(city, units)
-    forecasts = forecast_by_weather_info(city_weather_info)
+    forecasts, units = get_weather_info_by_city(city, units)
     forecast_length = get_forecast_length(forecast)
     print_output(city, units, forecasts, forecast_length)
 
