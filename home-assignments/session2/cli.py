@@ -1,39 +1,41 @@
-try:
-    import click
-    from weather import Weather, Unit
-except Exception as e:
-    e.KeyError: ModuleNotFoundError
+import click
+from weather import Weather, Unit
+
+
+TODAY_FORECAST_LENGTH = 1
+MAX_FORECAST_LENGTH = 9
 
 
 def get_weather_info_by_city(city, units):
-    weather = Weather()
-    selected_units = ""
-    if units == "c":
+    if units == "-c":
         weather = Weather(unit=Unit.CELSIUS)
         selected_units = "Celsius"
+        city_weather_info = weather.lookup_by_location(city)
+        forecasts = city_weather_info.forecast
 
-    elif units == "f":
+        return forecasts, selected_units
+
+    elif units == "-f":
         weather = Weather(unit=Unit.FAHRENHEIT)
         selected_units = "Fahrenheit"
+        city_weather_info = weather.lookup_by_location(city)
+        forecasts = city_weather_info.forecast
+
+        return forecasts, selected_units
 
     else:
         print("none or wrong units selected")
         exit(1)
 
-    city_weather_info = weather.lookup_by_location(city)
-    forecasts = city_weather_info.forecast
-
-    return forecasts, selected_units
-
 
 def get_forecast_length(forecast):
     split_forecast = forecast.split("+")
-    if len(split_forecast) == 1:
+    if len(split_forecast) == TODAY_FORECAST_LENGTH:
         forecast_length = 0
     else:
         forecast_length = int(split_forecast[1])
 
-    if forecast_length > 9:
+    if forecast_length > MAX_FORECAST_LENGTH:
         print("Required forecast in unknown, forecast of up to 10 days may be displayed")
         exit(1)
 
@@ -64,7 +66,8 @@ def print_output(city, units, forecasts, forecast_length):
 
 @click.command()
 @click.option("--city", help="selected city")
-@click.option("--units", type=click.Choice(['c', 'f']), help="select 'c' for Celsius or 'f' for Fahrenhiet.")
+@click.option('-c', 'units', required=True, flag_value='-c', type=str, help='Display temperature in Celsius.')
+@click.option('-f', 'units', required=True, flag_value='-f', type=str, help='Display temperature in Fahrenheit.')
 @click.option("--forecast", required=False, default="TODAY", show_default=True,
               help="selected days , starting from today"
                    "for example: --forecast TODAY for today's forecast, TODAY+3 for next 3 days")
